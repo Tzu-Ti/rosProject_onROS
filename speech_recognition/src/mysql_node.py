@@ -44,7 +44,7 @@ class Mysql(object):
                 now_seconds = time.mktime(now_time.timetuple())
                 sql_seconds = time.mktime(sql_time.timetuple())
 		delta = now_seconds - sql_seconds
-                if delta <= 5:  return True
+                if delta <= 4:  return True
                 else:   return False
 
         def send_activity(self):

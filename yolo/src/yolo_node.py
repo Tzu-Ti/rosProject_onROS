@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import rospy
-from std_msgs.msg import Int32, Bool
+from std_msgs.msg import Int32, Bool, String
 
 import cv2
 import picamera
@@ -18,6 +18,9 @@ class Yolo(object):
 		self.ip = "192.168.0.145"
 		self.port = 5050
 
+		# Publishers
+		self.pub_location = rospy.Publisher("~location", String, queue_size=1)
+
 		# Subscribers
 		self.sub_camera = rospy.Subscriber("~exe_camera", Bool, self.camera, queue_size=1)
 
@@ -28,8 +31,10 @@ class Yolo(object):
 		server.listen(1)
 		client, addr = server.accept()
 		print("Connected by", addr)
-		objCounts = client.recv(1024)
-		print("[receive] %s" %objCounts)
+		location = client.recv(1024)
+		self.send_location(location)
+		print("[receive] %s" %location)
+		client.close()
 		server.close()
 
 	##### take a picture and send to GPU computer #####
@@ -63,6 +68,11 @@ class Yolo(object):
 			s.close()
        
 			self.receive()
+
+	def send_location(self, loc):
+		loc_msg = String()
+		loc_msg.data = loc
+		self.pub_location.publish(loc_msg)
 
 if __name__ == "__main__":
 	rospy.init_node("yolo", anonymous=False)

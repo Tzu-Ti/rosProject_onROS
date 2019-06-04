@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import rospy
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, String
 from duckietown_msgs.msg import Twist2DStamped
 from sensor_msgs.msg import Joy
 
@@ -17,7 +17,7 @@ class Control_car(object):
 		# Subscribers
 		self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
 		self.sub_speech = rospy.Subscriber("~control_cmd", Int32, self.move, queue_size=1)
-		#self.sub_find = rospy.Subscriber(
+		self.sub_find = rospy.Subscriber("~find_control", String, self.auto_move, queue_size=1)
 
 		# Pubishers
 		self.pub_car_cmd = rospy.Publisher("~car_cmd", Twist2DStamped, queue_size=1)
@@ -45,8 +45,24 @@ class Control_car(object):
 		start_time = time.time()
 		end_time = time.time()
 		while (end_time - start_time) <= 2:
-			self.send_car_msg(2 * direction, turn)
+			self.send_car_msg(direction, turn)
 			end_time = time.time()
+
+	##### Auto find person #####
+	def auto_move(self, control_msg):
+		control_msg = control_msg.data
+		print(control_msg)
+
+		if control_msg == "straight":
+			self.go_direction(0.3, 0)
+		elif control_msg == "litleft":
+			self.go_direction(0.4, 0.45)
+		elif control_msg == "litright":
+			self.go_direction(0.4, -0.45)
+		elif control_msg == "bigleft":
+			self.go_direction(0.4, 1)
+		elif control_msg == "bigright":
+			self.go_direction(0.4, -1)
 	
 	##### Send car_msg #####
 	def send_car_msg(self, v, omega):

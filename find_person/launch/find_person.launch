@@ -4,6 +4,7 @@
         <arg name="node_name" default="find_person_node"/>
 
 	<remap from="$(arg node_name)/exe_camera" to="yolo_node/exe_camera"/>
+	<remap from="$(arg node_name)/find_control" to="control_car_node/find_control"/>
 
 	<node ns="$(arg veh)" name="$(arg node_name)" pkg="$(arg pkg_name)" type="$(arg node_name).py" output="screen">
         </node>
