@@ -1,0 +1,21 @@
+<launch>
+	<arg name="veh" default="$(env VEHICLE_NAME)"/>
+	<arg name="pkg_name" value="speech_recognition"/>
+	<arg name="node_name" default="speech_recognition_node"/>
+
+
+	<remap from="$(arg node_name)/control_cmd" to="control_car_node/control_cmd"/>
+	<remap from="$(arg node_name)/exe_find" to="find_person_node/exe_find"/>
+
+	<node ns="$(arg veh)" name="$(arg node_name)" pkg="$(arg pkg_name)" type="$(arg node_name).py" output="screen">
+	</node>
+
+	<node ns="$(arg veh)" name="mysql_node" pkg="$(arg pkg_name)" type="mysql_node.py" output="screen">
+	</node>
+
+	<include file="$(find control_car)/launch/control_car.launch">
+	</include>
+	<include file="$(find find_person)/launch/find_person.launch">
+	</include>
+
+</launch>

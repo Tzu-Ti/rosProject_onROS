@@ -1,0 +1,11 @@
+<launch>
+        <arg name="veh" default="$(env VEHICLE_NAME)"/>
+        <arg name="pkg_name" value="yolo"/>
+        <arg name="node_name" default="yolo_node"/>
+
+	<node ns="$(arg veh)" name="$(arg node_name)" pkg="$(arg pkg_name)" type="$(arg node_name).py" output="screen">
+        </node>
+
+</launch>
+
+
