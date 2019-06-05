@@ -44,7 +44,7 @@ class Control_car(object):
 	def go_direction(self, direction, turn):
 		start_time = time.time()
 		end_time = time.time()
-		while (end_time - start_time) <= 2:
+		while (end_time - start_time) <= 4:
 			self.send_car_msg(direction, turn)
 			end_time = time.time()
 
@@ -54,15 +54,15 @@ class Control_car(object):
 		print(control_msg)
 
 		if control_msg == "straight":
-			self.go_direction(0.3, 0)
+			self.go_direction(0.1, 0)
 		elif control_msg == "litleft":
-			self.go_direction(0.4, 0.45)
+			self.go_direction(0.15, 0.45)
 		elif control_msg == "litright":
-			self.go_direction(0.4, -0.45)
+			self.go_direction(0.15, -0.45)
 		elif control_msg == "bigleft":
-			self.go_direction(0.4, 1)
+			self.go_direction(0.15, 1)
 		elif control_msg == "bigright":
-			self.go_direction(0.4, -1)
+			self.go_direction(0.15, -1)
 	
 	##### Send car_msg #####
 	def send_car_msg(self, v, omega):

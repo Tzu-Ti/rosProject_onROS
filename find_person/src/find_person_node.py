@@ -59,18 +59,17 @@ class Find_person(object):
 		print("[find_person_node]", exe_msg)
 		print("[find_person_node] Start find person!!")
 		if exe_msg:
-			self.send_exe_camera()
+			self.send_exe_camera(True)
 
-	def send_exe_camera(self):
+	def send_exe_camera(self, BOOL):
 		exe_msg = Bool()
-		exe_msg.data = True
+		exe_msg.data = BOOL
 		self.pub_camera.publish(exe_msg)
 
 	def send_find_control(self, cmd):
 		control_msg = String()
 		control_msg.data = cmd
 		self.pub_control.publish(control_msg)
-		self.send_exe_camera()
 
 if __name__ == "__main__":
 	rospy.init_node("find_person", anonymous=False)

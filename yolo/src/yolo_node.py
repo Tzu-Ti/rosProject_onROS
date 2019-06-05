@@ -14,9 +14,8 @@ class Yolo(object):
 		### GPU computer ###
 		self.HOST = "192.168.0.177"
 		self.PORT = 8080
-		### ROS ###
-		self.ip = "192.168.0.145"
-		self.port = 5050
+
+		self.yoloing = None
 
 		# Publishers
 		self.pub_location = rospy.Publisher("~location", String, queue_size=1)
@@ -39,7 +38,6 @@ class Yolo(object):
 
 	##### take a picture and send to GPU computer #####
 	def camera(self, exe_msg):
-		exe_msg = exe_msg
 		with picamera.PiCamera() as camera:
 			camera.resolution = (640, 480)
 			camera.framerate = 24
@@ -48,31 +46,53 @@ class Yolo(object):
 			### Connect to GPU computer ###
 			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			s.connect((self.HOST, self.PORT))
-				
-			### Take a picture ###
-			image = np.empty((480 * 640 *3,), dtype=np.uint8)
-			camera.capture(image, format='bgr')
-			image = image.reshape((480, 640, 3))
-			cv2.imwrite("test.jpg", image)
+			
+			while not rospy.is_shutdown():	
+				### Take a picture ###
+				image = np.empty((480 * 640 *3,), dtype=np.uint8)
+				camera.capture(image, format='bgr')
+				image = image.reshape((480, 640, 3))
+				cv2.imwrite("test.jpg", image)
 
-			### Send to GPU computer ###
-			imgFile = open("test.jpg")
-			while True:
-				imgData = imgFile.readline(1024)
-				if not imgData:
+				### Create socket with GPU computer ###
+				### Send image to GPU computer ###
+				imgFile = open("test.jpg")
+				while True:
+					imgData = imgFile.readline(1024)
+					if not imgData:
+						s.send("over")
+						break
+					s.send(imgData)
+				imgFile.close()
+				print("transit end")
+				location = s.recv(1024)
+				self.send_location(location)
+				time.sleep(3)
+
+				if self.reach(location):
 					break
-				s.send(imgData)
-			imgFile.close()
-			print("transit end")
 
 			s.close()
-       
-			self.receive()
 
 	def send_location(self, loc):
 		loc_msg = String()
 		loc_msg.data = loc
 		self.pub_location.publish(loc_msg)
+
+	def reach(self, location):
+		if 'None' in location:
+                        X = None
+                        Y = None
+                        Area = None
+                else:
+                        location = location.split(' ')
+                        X = float(location[0])
+                        Y = float(location[1])
+                        Area = float(location[2])
+			if Area > 50000:
+				return True
+                        else:
+				return False
 
 if __name__ == "__main__":
 	rospy.init_node("yolo", anonymous=False)
