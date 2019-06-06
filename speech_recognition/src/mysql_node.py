@@ -15,7 +15,7 @@ class Mysql(object):
                 while not rospy.is_shutdown():
 			# print("Fetching data...")
                         db = mysql.connect(
-                                host = "192.168.0.175",
+                                host = "172.20.10.6",
                                 port = 3306,
                                 user = "titi",
                                 passwd = "titi861203",

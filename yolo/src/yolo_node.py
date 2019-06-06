@@ -12,8 +12,8 @@ class Yolo(object):
 	def __init__(self):
 		##### Socket #####
 		### GPU computer ###
-		self.HOST = "192.168.0.177"
-		self.PORT = 8080
+		self.HOST = "175.182.105.203"
+		self.PORT = 6666
 
 		self.yoloing = None
 
@@ -22,19 +22,6 @@ class Yolo(object):
 
 		# Subscribers
 		self.sub_camera = rospy.Subscriber("~exe_camera", Bool, self.camera, queue_size=1)
-
-	##### Receive results from GPU computer #####
-	def receive(self):
-		server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		server.bind((self.ip, self.port))
-		server.listen(1)
-		client, addr = server.accept()
-		print("Connected by", addr)
-		location = client.recv(1024)
-		self.send_location(location)
-		print("[receive] %s" %location)
-		client.close()
-		server.close()
 
 	##### take a picture and send to GPU computer #####
 	def camera(self, exe_msg):
@@ -67,11 +54,12 @@ class Yolo(object):
 				print("transit end")
 				location = s.recv(1024)
 				self.send_location(location)
-				time.sleep(3)
+				time.sleep(0.5)
 
 				if self.reach(location):
 					break
 
+			print("socket deconnection...")
 			s.close()
 
 	def send_location(self, loc):
