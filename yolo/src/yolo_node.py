@@ -54,7 +54,7 @@ class Yolo(object):
 				print("transit end")
 				location = s.recv(1024)
 				self.send_location(location)
-				time.sleep(0.5)
+				time.sleep(1)
 
 				if self.reach(location):
 					break

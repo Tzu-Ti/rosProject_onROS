@@ -2,12 +2,16 @@
 import rospy
 from std_msgs.msg import Int32, Bool, String
 
+import time
+
 class Find_person(object):
 	def __init__(self):
 		# Initialize
 		self.X = None
 		self.Y = None
 		self.Area = None
+
+		self.noneCount = 0
 
 		# Publishers
 		self.pub_camera = rospy.Publisher("~exe_camera", Bool, queue_size=1)
@@ -24,12 +28,21 @@ class Find_person(object):
 			self.X = None
 			self.Y = None
 			self.Area = None
+			
+			self.noneCount += 1
+			self.turn()
 		else:
 			location = location_msg.split(' ')
 			self.X = float(location[0])
 			self.Y = float(location[1])
 			self.Area = float(location[2])
+			self.noneCount = 0
 			self.decision()
+
+	def turn(self):
+		if self.noneCount >= 2:
+			print("no person in this scene")
+			self.send_find_control("turn")
 
 	def decision(self):
 		X = self.X

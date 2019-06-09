@@ -36,15 +36,15 @@ class Control_car(object):
 		print("[control_car] %d" %num_activity)
 		if num_activity != 0:
 			print("execute go_direction!")
-			self.go_direction(num_activity, 0)
+			self.go_direction(num_activity, 0, 2)
 		else:
-			self.go_direction(0, 8.5)
+			self.go_direction(0, 8.5, 2)
 
 
-	def go_direction(self, direction, turn):
+	def go_direction(self, direction, turn, exeTime):
 		start_time = time.time()
 		end_time = time.time()
-		while (end_time - start_time) <= 2:
+		while (end_time - start_time) <= exeTime:
 			self.send_car_msg(direction, turn)
 			end_time = time.time()
 
@@ -54,16 +54,18 @@ class Control_car(object):
 		print(control_msg)
 
 		if control_msg == "straight":
-			self.go_direction(0.1, 0)
+			self.go_direction(0.1, 0, 2)
 		elif control_msg == "litleft":
-			self.go_direction(0.15, 0.45)
+			self.go_direction(0.15, 0.45, 2)
 		elif control_msg == "litright":
-			self.go_direction(0.15, -0.45)
+			self.go_direction(0.15, -0.45, 2)
 		elif control_msg == "bigleft":
-			self.go_direction(0.15, 0.8)
+			self.go_direction(0.15, 0.8, 2)
 		elif control_msg == "bigright":
-			self.go_direction(0.15, -0.8)
-	
+			self.go_direction(0.15, -0.8, 2)
+		elif control_msg == "turn":
+			self.go_direction(0, 6, 0.75)	
+
 	##### Send car_msg #####
 	def send_car_msg(self, v, omega):
 		car_cmd_msg = Twist2DStamped()
